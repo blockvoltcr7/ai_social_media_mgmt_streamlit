@@ -1,0 +1,12 @@
+/* Add custom styles here */
+body {
+    font-family: Arial, sans-serif;
+}
+
+.stButton > button {
+    width: 100%;
+}
+
+.stTextInput > div > div > input {
+    color: #4F8BF9;
+}
