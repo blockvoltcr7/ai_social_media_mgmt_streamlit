@@ -6,10 +6,10 @@ import time
 import base64
 import requests
 import anthropic
-from src.utils.logger import setup_logger
+from utils.logger import setup_logger
 
 # Set up logging
-logger = setup_logger("content_analysis", "content_analysis.log")
+logger = setup_logger()
 
 
 
