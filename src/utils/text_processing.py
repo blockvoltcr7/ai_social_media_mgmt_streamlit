@@ -1,7 +1,7 @@
 import os
 import google.generativeai as genai
 import anthropic
-import openai
+from openai import OpenAI
 from together import Together
 from utils.logger import setup_logger
 
