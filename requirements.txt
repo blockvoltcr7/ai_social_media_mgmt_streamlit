@@ -71,7 +71,7 @@ more-itertools==10.4.0
 multidict==6.0.5
 networkx==3.2.1
 numpy==1.26.4
-openai==1.40.2
+openai==1.40.3
 packaging==24.1
 pandas==2.2.2
 pathspec==0.12.1

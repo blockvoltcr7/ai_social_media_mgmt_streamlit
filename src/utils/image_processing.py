@@ -11,7 +11,7 @@ logger = setup_logger()
 def process_image(image_file, prompt, api_choice, model, temperature=None, top_p=None, max_tokens=None):
     if api_choice == "Gemini":
         return process_image_gemini(image_file, prompt, model, temperature, top_p, max_tokens)
-    elif api_choice == "OpenAI Vision":
+    elif api_choice == "OpenAI":
         return process_image_openai(image_file, prompt, model, max_tokens)
     elif api_choice == "Claude":
         return process_image_claude(image_file, prompt, model, max_tokens)

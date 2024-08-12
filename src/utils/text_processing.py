@@ -1,0 +1,92 @@
+import os
+import google.generativeai as genai
+import anthropic
+import openai
+from utils.logger import setup_logger
+
+logger = setup_logger()
+
+def process_text(content, prompt, api_choice, model, temperature=None, top_p=None, max_tokens=None):
+    if api_choice == "Gemini":
+        return process_text_gemini(content, prompt, model, temperature, top_p, max_tokens)
+    elif api_choice == "OpenAI":
+        return process_text_openai(content, prompt, model, temperature, max_tokens)
+    elif api_choice == "Claude":
+        return process_text_claude(content, prompt, model, max_tokens)
+    else:
+        logger.error(f"Unsupported API choice: {api_choice}")
+        return None
+
+def process_text_gemini(content, prompt, model, temperature, top_p, max_tokens):
+    try:
+        logger.info(f"Starting text processing with Gemini. Model: {model}, Temperature: {temperature}, Top P: {top_p}, Max Tokens: {max_tokens}")
+        gemini_model = genai.GenerativeModel(model_name=model)
+        full_prompt = f"{content}\n\n{prompt}"
+        response = gemini_model.generate_content(
+            full_prompt,
+            generation_config=genai.types.GenerationConfig(
+                temperature=temperature,
+                top_p=top_p,
+                max_output_tokens=max_tokens,
+            )
+        )
+        logger.info("Content generated successfully by Gemini model")
+        return response.text if response and response.parts else None
+    except Exception as e:
+        logger.error(f"An error occurred while processing the text with Gemini: {str(e)}")
+        return None
+
+def process_text_openai(content, prompt, model, temperature, max_tokens):
+    try:
+        logger.info(f"Starting text processing with OpenAI. Model: {model}, Temperature: {temperature}, Max Tokens: {max_tokens}")
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            logger.error("OPENAI_API_KEY environment variable is not set")
+            raise ValueError("OPENAI_API_KEY environment variable is not set")
+
+        client = OpenAI(api_key=api_key)
+        full_prompt = f"{content}\n\n{prompt}"
+        
+        completion = client.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": full_prompt}
+            ],
+            temperature=temperature,
+            max_tokens=max_tokens
+        )
+        
+        logger.info("Content generated successfully by OpenAI model")
+        return completion.choices[0].message.content if completion.choices else None
+    except Exception as e:
+        logger.error(f"An error occurred while processing the text with OpenAI: {str(e)}")
+        return None
+
+def process_text_claude(content, prompt, model, max_tokens):
+    try:
+        logger.info(f"Starting text processing with Claude. Model: {model}, Max Tokens: {max_tokens}")
+        api_key = os.getenv("ANTHROPIC_API_KEY")
+        if not api_key:
+            logger.error("ANTHROPIC_API_KEY environment variable is not set")
+            raise ValueError("ANTHROPIC_API_KEY environment variable is not set")
+
+        client = anthropic.Anthropic(api_key=api_key)
+        full_prompt = f"{content}\n\n{prompt}"
+
+        message = client.messages.create(
+            model=model,
+            max_tokens=max_tokens,
+            messages=[
+                {
+                    "role": "user",
+                    "content": full_prompt
+                }
+            ]
+        )
+
+        logger.info("Content generated successfully by Claude model")
+        return message.content[0].text if message.content else None
+    except Exception as e:
+        logger.error(f"An error occurred while processing the text with Claude: {str(e)}")
+        return None
