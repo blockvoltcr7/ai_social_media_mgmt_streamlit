@@ -1,6 +1,7 @@
 import streamlit as st
 from dotenv import load_dotenv
 import os
+import google.generativeai as genai
 from utils.logger import setup_logger
 from utils.image_processing import process_image
 
