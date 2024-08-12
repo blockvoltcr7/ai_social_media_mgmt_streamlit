@@ -43,13 +43,18 @@ def get_api_info():
         max_tokens = st.sidebar.slider("Maximum Tokens:", min_value=100, max_value=4096, value=1024, step=100)
         logger.info(f"API choice: Claude, Model: {claude_model}, Max Tokens: {max_tokens}")
         return api_choice, claude_model, None, None, max_tokens
-    else:  # Meta-Llama
-        meta_llama_model = "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo"
-        temp = st.sidebar.slider("Temperature:", min_value=0.0, max_value=2.0, value=0.7, step=0.1)
-        topp = st.sidebar.slider("Top P:", min_value=0.0, max_value=1.0, value=0.7, step=0.1)
-        max_tokens = st.sidebar.slider("Maximum Tokens:", min_value=100, max_value=512, value=512, step=50)
-        logger.info(f"API choice: Meta-Llama, Model: {meta_llama_model}, Temperature: {temp}, Top P: {topp}, Max Tokens: {max_tokens}")
-        return api_choice, meta_llama_model, temp, topp, max_tokens
+    elif api_choice == "Meta-Llama":
+        model = st.sidebar.radio("Choose Meta-Llama Model:", (
+            "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
+            "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo",
+            "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo"
+        ))
+        temp = st.sidebar.slider("Temperature:", min_value=0.0, max_value=2.0, value=1.0, step=0.25)
+        topp = st.sidebar.slider("Top P:", min_value=0.0, max_value=1.0, value=0.94, step=0.01)
+        max_tokens = st.sidebar.slider("Maximum Tokens:", min_value=100, max_value=8194, value=200, step=50)
+        logger.info(f"API choice: Meta-Llama, Model: {model}, Temperature: {temp}, Top P: {topp}, Max Tokens: {max_tokens}")
+        return api_choice, model, temp, topp, max_tokens
+
 
 def generate_final_content(section_id, api_choice, model, temperature, top_p, max_tokens):
     analysis_result_key = f"analysis_{section_id}"
@@ -105,6 +110,12 @@ def analyze_image(section_id, image_file, api_choice, model, temperature, top_p,
 
         if analyze_button and prompt:
             with st.spinner("Analyzing image..."):
+                if api_choice == "Meta-Llama":
+                    # Default to Gemini for image processing if Meta-Llama is selected
+                    logger.info(f"Meta-Llama selected. Defaulting to Gemini for image analysis.")
+                    model = "gemini-1.5-flash"  # or another default model
+                    api_choice = "Gemini"
+                
                 logger.info(f"Starting analysis for image {section_id}. API: {api_choice}, Model: {model}")
                 analysis = process_image(image_file, prompt, api_choice, model, temperature, top_p, max_tokens)
                 
@@ -142,7 +153,7 @@ def main():
         if OPENAI_API_KEY is None:
             st.error("OPENAI_API_KEY environment variable is not set")
             return
-    else:  # Claude
+    else:  # Claude or Meta-Llama
         ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
         if ANTHROPIC_API_KEY is None:
             st.error("ANTHROPIC_API_KEY environment variable is not set")
