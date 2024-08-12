@@ -12,9 +12,51 @@ logger = setup_logger()
 # Load environment variables
 load_dotenv()
 
+def display_instructions():
+    with st.expander("📋 How to Use This Tool", expanded=True):
+        st.write("""
+        1. Select Your AI Model:
+           - Choose from available AI models (Gemini, OpenAI, Claude, Meta-Llama).
+           - Adjust parameters like temperature, top-p, and max tokens to fine-tune the output.
+        
+        2. Upload Your Images:
+           - Upload up to 3 images you want to analyze and create content for.
+           - Enter a prompt for each image to guide the AI in generating insights.
+        
+        3. Review the Image Analysis:
+           - Review the AI-generated analysis to understand key insights about the image content.
+        
+        4. Create Your Caption and Hashtags:
+           - Enter a caption and relevant hashtags for the image.
+        
+        5. Generate Final Content:
+           - Use the 'Generate Final Content' button to create a cohesive, engaging post.
+           - The AI combines image analysis, your caption, and hashtags for an optimized post.
+        
+        6. Download or Clear:
+           - Save your generated content or clear all session data to start fresh with new images.
+        """)
+    
+    with st.expander("✨ Why This Tool is Helpful"):
+        st.write("""
+         - Time-Saving: Quickly generate high-quality social media posts.
+         - AI-Driven Insights: Gain deep insights from your images for more engaging captions.
+         - Consistency: Maintain a consistent tone and style across all your posts.
+         - Optimization: Create posts optimized for social media engagement, particularly on Instagram.
+        """)
+    
+    with st.expander("💡 How This Tool Can Help You"):
+        st.write("""
+         - Content Creators: Streamline your content creation process, allowing for more creativity.
+         - Social Media Managers: Easily generate posts that are engaging and optimized.
+         - Marketers: Enhance social media campaigns with data-driven, AI-enhanced content.
+        """)
+        
 def page_setup():
-    st.title("Social Media Content Manager")
-    st.header("AI-Powered Image Analysis", divider="blue")
+    st.title("AI-Powered Content Optimization Tool")
+    st.header("Transform Your Images into Engaging Posts", divider="blue")
+    display_instructions()
+
     hide_menu_style = """
             <style>
             #MainMenu {visibility: hidden;}
