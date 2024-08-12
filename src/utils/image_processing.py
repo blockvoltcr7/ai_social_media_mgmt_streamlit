@@ -15,6 +15,9 @@ def process_image(image_file, prompt, api_choice, model, temperature=None, top_p
         return process_image_openai(image_file, prompt, model, max_tokens)
     elif api_choice == "Claude":
         return process_image_claude(image_file, prompt, model, max_tokens)
+    elif api_choice == "Meta-Llama":
+        logger.info("Meta-Llama selected, defaulting to Gemini Vision for image processing")
+        return process_image_gemini(image_file, prompt, model, temperature, top_p, max_tokens)
     else:
         logger.error(f"Unsupported API choice: {api_choice}")
         return None
