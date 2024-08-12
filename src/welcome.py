@@ -14,7 +14,7 @@ from datetime import datetime
 load_dotenv()
 
 def page_setup():
-    st.header("Chat with a Large Language Model!", anchor=False, divider="blue")
+    st.header("Chat with a Gemini!", anchor=False, divider="blue")
     hide_menu_style = """
             <style>
             #MainMenu {visibility: hidden;}
@@ -145,6 +145,22 @@ def upload_document():
 
 def main():
     page_setup()
+    
+    # Welcome message for Veronika
+    st.markdown("""
+    # Welcome, Veronika! 👋
+
+    This is your personal AI assistant powered by Google's Gemini model. Here's what you can do:
+
+    - Chat with the AI about any topic
+    - Upload and analyze images
+    - Query PDF documents
+    - Adjust AI settings for personalized responses
+    - Save your conversations for future reference
+
+    Feel free to explore and let me know if you have any questions!
+    """)
+    
     model, temperature, top_p, max_tokens = get_llminfo()
 
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
@@ -204,7 +220,7 @@ def main():
             if pdf_content:
                 st.success("PDF processed successfully!")
                 st.session_state.pdf_content = pdf_content
-                query = st.text_input("Enter your query about the PDF:")
+                query = st.text_area("Enter your query about the PDF:")
                 if st.button("Submit Query"):
                     if query:
                         full_prompt = f"{pdf_content}\n\nUser: {query}"
