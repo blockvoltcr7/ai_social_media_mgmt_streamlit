@@ -32,8 +32,8 @@ def get_api_info():
         logger.info(f"API choice: Gemini, Model: {model}, Temperature: {temp}, Top P: {topp}, Max Tokens: {max_tokens}")
         return api_choice, model, temp, topp, max_tokens
     elif api_choice == "OpenAI Vision":
-        openai_model = st.sidebar.radio("Choose OpenAI Model:", ("gpt-4o", "gpt-4o-mini", "gpt-4-turbo"))
-        max_tokens = st.sidebar.slider("Maximum Tokens:", min_value=100, max_value=300, value=300, step=50)
+        openai_model = st.sidebar.radio("Choose OpenAI Model:", ("gpt-4-vision-preview",))
+        max_tokens = st.sidebar.slider("Maximum Tokens:", min_value=100, max_value=4096, value=300, step=50)
         logger.info(f"API choice: OpenAI Vision, Model: {openai_model}, Max Tokens: {max_tokens}")
         return api_choice, openai_model, None, None, max_tokens
     else:  # Claude
