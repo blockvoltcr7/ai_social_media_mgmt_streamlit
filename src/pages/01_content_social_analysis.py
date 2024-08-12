@@ -24,7 +24,7 @@ def page_setup():
 
 def get_api_info():
     st.sidebar.header("API Options", divider='rainbow')
-    api_choice = st.sidebar.radio("Choose API:", ("Gemini", "OpenAI", "Claude"))
+    api_choice = st.sidebar.radio("Choose API:", ("Gemini", "OpenAI", "Claude", "Meta-Llama"))
     
     if api_choice == "Gemini":
         model = st.sidebar.radio("Choose LLM:", ("gemini-1.5-flash", "gemini-1.5-pro"))
@@ -38,11 +38,18 @@ def get_api_info():
         max_tokens = st.sidebar.slider("Maximum Tokens:", min_value=100, max_value=8000, value=300, step=50)
         logger.info(f"API choice: OpenAI, Model: {openai_model}, Max Tokens: {max_tokens}")
         return api_choice, openai_model, None, None, max_tokens
-    else:  # Claude
+    elif api_choice == "Claude":
         claude_model = st.sidebar.radio("Choose Claude Model:", ("claude-3-5-sonnet-20240620", "claude-3-opus-20240229"))
         max_tokens = st.sidebar.slider("Maximum Tokens:", min_value=100, max_value=4096, value=1024, step=100)
         logger.info(f"API choice: Claude, Model: {claude_model}, Max Tokens: {max_tokens}")
         return api_choice, claude_model, None, None, max_tokens
+    else:  # Meta-Llama
+        meta_llama_model = "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo"
+        temp = st.sidebar.slider("Temperature:", min_value=0.0, max_value=2.0, value=0.7, step=0.1)
+        topp = st.sidebar.slider("Top P:", min_value=0.0, max_value=1.0, value=0.7, step=0.1)
+        max_tokens = st.sidebar.slider("Maximum Tokens:", min_value=100, max_value=512, value=512, step=50)
+        logger.info(f"API choice: Meta-Llama, Model: {meta_llama_model}, Temperature: {temp}, Top P: {topp}, Max Tokens: {max_tokens}")
+        return api_choice, meta_llama_model, temp, topp, max_tokens
 
 def generate_final_content(section_id, api_choice, model, temperature, top_p, max_tokens):
     analysis_result_key = f"analysis_{section_id}"

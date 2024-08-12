@@ -2,6 +2,7 @@ import os
 import google.generativeai as genai
 import anthropic
 import openai
+from together import Together
 from utils.logger import setup_logger
 
 logger = setup_logger()
@@ -13,8 +14,34 @@ def process_text(content, prompt, api_choice, model, temperature=None, top_p=Non
         return process_text_openai(content, prompt, model, temperature, max_tokens)
     elif api_choice == "Claude":
         return process_text_claude(content, prompt, model, max_tokens)
+    elif api_choice == "Meta-Llama":
+        return process_text_meta_llama(content, prompt, model, temperature, top_p, max_tokens)
     else:
         logger.error(f"Unsupported API choice: {api_choice}")
+        return None
+
+def process_text_meta_llama(content, prompt, model, temperature, top_p, max_tokens):
+    try:
+        logger.info(f"Starting text processing with Meta-Llama. Model: {model}, Temperature: {temperature}, Top P: {top_p}, Max Tokens: {max_tokens}")
+        client = Together(api_key=os.getenv('TOGETHER_API_KEY'))
+        full_prompt = f"{content}\n\n{prompt}"
+        
+        response = client.chat.completions.create(
+            model=model,
+            messages=[{"role": "user", "content": full_prompt}],
+            max_tokens=max_tokens,
+            temperature=temperature,
+            top_p=top_p,
+            top_k=50,
+            repetition_penalty=1,
+            stop=["<|eot_id|>"],
+            stream=False
+        )
+        
+        logger.info("Content generated successfully by Meta-Llama model")
+        return response.choices[0].message.content if response.choices else None
+    except Exception as e:
+        logger.error(f"An error occurred while processing the text with Meta-Llama: {str(e)}")
         return None
 
 def process_text_gemini(content, prompt, model, temperature, top_p, max_tokens):
